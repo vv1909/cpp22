@@ -27,11 +27,11 @@ void initDegree(int degree[8][8], int n) {
 
 // Update degree matrix when a knight is placed on (x,y) (delta = -1)
 // or removed from (x,y) (delta = +1).
-void updateDegree(int degree[8][8], int n, int x, int y, int delta) {
+void updateDegree(int board[8][8], int degree[8][8], int n, int x, int y, int delta) {
     for (int d = 0; d < 8; d++) {
         int nx = x + dir[d][0];
         int ny = y + dir[d][1];
-        if (nx >= 0 && nx < n && ny >= 0 && ny < n) {
+        if (nx >= 0 && nx < n && ny >= 0 && ny < n && board[nx][ny] == -1) {
             degree[nx][ny] += delta;
         }
     }
@@ -104,13 +104,13 @@ bool knightTour(int board[8][8], int degree[8][8], int n,
         int ny = y + dir[dirIdx][1];
 
         board[nx][ny] = step;
-        updateDegree(degree, n, nx, ny, -1);   // occupy the cell
+        updateDegree(board, degree, n, nx, ny, -1);   // occupy the cell
 
         if (knightTour(board, degree, n, nx, ny, step + 1))
             return true;
 
         // Backtrack
-        updateDegree(degree, n, nx, ny, +1);   // free the cell
+        updateDegree(board, degree, n, nx, ny, +1);   // free the cell
         board[nx][ny] = -1;
     }
 
@@ -129,12 +129,12 @@ int main() {
     // Initialise board and degree matrix
     for (int i = 0; i < n; i++)
         for (int j = 0; j < n; j++)
-            board[i][j] = -1;
+            board[i][j] = -1; 
     initDegree(degree, n);
 
     // Place the starting knight and update degree accordingly
     board[startx][starty] = 0;
-    updateDegree(degree, n, startx, starty, -1);
+    updateDegree(board, degree, n, startx, starty, -1);
 
     if (knightTour(board, degree, n, startx, starty, 1)) {
         for (int i = 0; i < n; i++) {
