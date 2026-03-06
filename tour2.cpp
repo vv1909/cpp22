@@ -1,6 +1,9 @@
 #include <iostream>
 #include <algorithm>
 #include <iomanip>
+#include <chrono>
+
+
 using namespace std;
 
 
@@ -87,7 +90,7 @@ int main() {
 
     cout << "Input coordinates (0-7) (0-7): ";
     cin >> startx >> starty;
-
+    auto start = chrono::steady_clock::now();
 
     int board[8][8];
 
@@ -111,6 +114,10 @@ int main() {
         {
             cout << "no solution";
         }
-    
+    auto end = chrono::steady_clock::now();
+
+    double seconds = chrono::duration<double>(end - start).count();
+
+    cout << "Time: " << seconds << " seconds\n";
     return 0;
 }
