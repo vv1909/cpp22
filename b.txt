@@ -1,0 +1,102 @@
+**What is an IP Address?**
+
+Every device connected to the internet needs an identifier. This identifier is called an **IP address (Internet Protocol address)**. Think of it like a postal address for your device — it allows data to know where to go and where it came from.
+
+When you open a website, send a message, or connect to a server, your device communicates using IP addresses behind the scenes.
+
+
+
+**Types of IP Addresses**
+
+There are two main versions used today:
+
+**IPv4**
+
+The older and still most common format.
+
+Example:
+
+```
+192.168.1.1
+```
+
+Structure:
+
+* 4 numbers
+* Each number ranges from **0–255**
+* Separated by dots
+
+Total possible IPv4 addresses:
+
+```
+2^32 = 4,294,967,296
+```
+
+That is about **4.3 billion addresses**.
+
+Because the internet grew much larger than expected, IPv4 addresses started running out.
+
+---
+
+**IPv6**
+
+Created to solve the IPv4 shortage.
+
+Example:
+
+```
+2001:0db8:85a3:0000:0000:8a2e:0370:7334
+```
+
+Structure:
+
+* 8 groups
+* Hexadecimal numbers
+* Separated by colons
+
+Total possible IPv6 addresses:
+
+```
+2^128 ≈ 340 undecillion
+```
+
+That is:
+
+```
+340,282,366,920,938,463,463,374,607,431,768,211,456
+```
+
+Enough for billions of devices per person on Earth.
+
+---
+
+**Reserved IPv4 Address Ranges**
+
+Some IP addresses are **not used on the public internet**. They are reserved for special purposes.
+
+**Private Networks**
+
+Used inside homes, companies, and internal networks.
+
+```
+10.0.0.0 – 10.255.255.255
+172.16.0.0 – 172.31.255.255
+192.168.0.0 – 192.168.255.255
+```
+
+These addresses cannot be routed on the public internet.
+
+---
+
+
+**Broadcast Address**
+
+Example:
+
+```
+255.255.255.255
+```
+
+Used to send a message to **all devices on a network**.
+
+
