@@ -1,16 +1,19 @@
 #include <iostream>
-#include <algorithm>
 #include <iomanip>
-#include <random>
-#include <chrono>
+#include <cstdlib>
+#include <ctime>
 using namespace std;
+
+const int n = 8;
+int board[n][n];
+int degree[n][n];
 
 int dir[8][2] = { {2, 1}, {1, 2}, {-1, 2}, {-2, 1},
                   {-2, -1}, {-1, -2}, {1, -2}, {2, -1} };
 
 // Initialise degree matrix: number of legal moves from each cell
 // when all cells are empty (only board boundaries considered).
-void initDegree(int degree[8][8], int n) {
+void initDegree() {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             int cnt = 0;
@@ -27,7 +30,7 @@ void initDegree(int degree[8][8], int n) {
 
 // Update degree matrix when a knight is placed on (x,y) (delta = -1)
 // or removed from (x,y) (delta = +1).
-void updateDegree(int board[8][8], int degree[8][8], int n, int x, int y, int delta) {
+void updateDegree(int x, int y, int delta) {
     for (int d = 0; d < 8; d++) {
         int nx = x + dir[d][0];
         int ny = y + dir[d][1];
@@ -37,80 +40,72 @@ void updateDegree(int board[8][8], int degree[8][8], int n, int x, int y, int de
     }
 }
 
-// Fills moveDirs and moveDegrees with all unvisited neighbours of (x,y).
-// Returns the number of valid moves (≤8). The arrays are sorted by degree
-// (ascending), and within equal degrees they are randomly shuffled.
-int getSortedMoves(int board[8][8], int degree[8][8], int n,
-                   int x, int y, int moveDirs[8], int moveDegrees[8]) {
-    int moveCount = 0;
+// Returns the number of unvisited neighbour moves from (x,y).
+// Fills moveDirs with the direction indices (0..7) and moveDegrees with
+// the current degree of each neighbour.
+int getMoves(int x, int y, int moveDirs[8], int moveDegrees[8]) {
+    int cnt = 0;
     for (int i = 0; i < 8; i++) {
         int nx = x + dir[i][0];
         int ny = y + dir[i][1];
         if (nx >= 0 && nx < n && ny >= 0 && ny < n && board[nx][ny] == -1) {
-            moveDirs[moveCount] = i;
-            moveDegrees[moveCount] = degree[nx][ny];
-            moveCount++;
+            moveDirs[cnt] = i;
+            moveDegrees[cnt] = degree[nx][ny];
+            cnt++;
         }
     }
-
-    // Sort moves by degree (ascending) using simple selection sort
-    // because moveCount ≤ 8.
-    for (int i = 0; i < moveCount - 1; i++) {
-        int minIdx = i;
-        for (int j = i + 1; j < moveCount; j++) {
-            if (moveDegrees[j] < moveDegrees[minIdx])
-                minIdx = j;
-        }
-        if (minIdx != i) {
-            swap(moveDegrees[i], moveDegrees[minIdx]);
-            swap(moveDirs[i], moveDirs[minIdx]);
-        }
-    }
-
-    // Random generator (static to keep state between calls)
-    static random_device rd;
-    static mt19937 g(rd());
-
-    // Shuffle each group of equal degree
-    int i = 0;
-    while (i < moveCount) {
-        int currentDeg = moveDegrees[i];
-        int j = i;
-        while (j < moveCount && moveDegrees[j] == currentDeg)
-            j++;
-        // Shuffle the directions in the range [i, j)
-        shuffle(moveDirs + i, moveDirs + j, g);
-        i = j;
-    }
-
-    return moveCount;
+    return cnt;
 }
 
-bool knightTour(int board[8][8], int degree[8][8], int n,
-                int x, int y, int step) {
+bool knightTour(int x, int y, int step) {
     if (step == n * n)
         return true;
 
     int moveDirs[8];
     int moveDegrees[8];
-    int moveCount = getSortedMoves(board, degree, n, x, y, moveDirs, moveDegrees);
+    int moveCount = getMoves(x, y, moveDirs, moveDegrees);
 
     if (moveCount == 0)
         return false;
 
+    // Find the minimum degree among the moves
+    int minDegree = moveDegrees[0];
+    for (int i = 1; i < moveCount; i++)
+        if (moveDegrees[i] < minDegree)
+            minDegree = moveDegrees[i];
+
+    // Collect indices of moves with that minimum degree
+    int candidates[8];
+    int candCount = 0;
     for (int i = 0; i < moveCount; i++) {
-        int dirIdx = moveDirs[i];
+        if (moveDegrees[i] == minDegree) {
+            candidates[candCount++] = i;
+        }
+    }
+
+    // Shuffle the candidates randomly
+    for (int i = 0; i < candCount - 1; i++) {
+        int r = i + rand() % (candCount - i);
+        // swap candidates[i] and candidates[r]
+        int temp = candidates[i];
+        candidates[i] = candidates[r];
+        candidates[r] = temp;
+    }
+
+    // Try each candidate in the shuffled order
+    for (int i = 0; i < candCount; i++) {
+        int dirIdx = moveDirs[candidates[i]];
         int nx = x + dir[dirIdx][0];
         int ny = y + dir[dirIdx][1];
 
         board[nx][ny] = step;
-        updateDegree(board, degree, n, nx, ny, -1);   // occupy the cell
+        updateDegree(nx, ny, -1);
 
-        if (knightTour(board, degree, n, nx, ny, step + 1))
+        if (knightTour(nx, ny, step + 1))
             return true;
 
         // Backtrack
-        updateDegree(board, degree, n, nx, ny, +1);   // free the cell
+        updateDegree(nx, ny, +1);
         board[nx][ny] = -1;
     }
 
@@ -118,29 +113,26 @@ bool knightTour(int board[8][8], int degree[8][8], int n,
 }
 
 int main() {
-    int n = 8;
-    int startx, starty;
-    cout << "Input coordinates (0-7) (0-7): ";
-    cin >> startx >> starty;
+    srand(static_cast<unsigned>(time(nullptr)));
 
-    int board[8][8];
-    int degree[8][8];
+    int startx, starty;
+    cout << "Input starting position (0-7) (0-7): ";
+    cin >> startx >> starty;
 
     // Initialise board and degree matrix
     for (int i = 0; i < n; i++)
         for (int j = 0; j < n; j++)
-            board[i][j] = -1; 
-    initDegree(degree, n);
+            board[i][j] = -1;
+    initDegree();
 
-    // Place the starting knight and update degree accordingly
     board[startx][starty] = 0;
-    updateDegree(board, degree, n, startx, starty, -1);
+    updateDegree(startx, starty, -1);
 
-    if (knightTour(board, degree, n, startx, starty, 1)) {
+    if (knightTour(startx, starty, 1)) {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++)
                 cout << setw(4) << board[i][j];
-            cout << endl;
+            cout << endl << endl;
         }
     } else {
         cout << "no solution" << endl;
