@@ -1,3 +1,4 @@
 *.exe
-l.cpp
 *.txt
+.vscode
+*.py

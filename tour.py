@@ -13,21 +13,19 @@ class Cell:
 
 N = 8
 
-# Move pattern on basis of the change of
-# x coordinates and y coordinates respectively
+
 cx = [1, 1, 2, 2, -1, -1, -2, -2]
 cy = [2, -2, 1, -1, 2, -2, 1, -1]
 
-# function restricts the knight to remain within
-# the 8x8 chessboard
+
 def limits(x, y):
     return ((x >= 0 and y >= 0) and (x < N and y < N))
 
-# Checks whether a square is valid and empty or not
+
 def isempty(a, x, y):
     return (limits(x, y)) and (a[y * N + x] < 0)
 
-# Returns the number of empty squares adjacent to (x, y)
+
 def getDegree(a, x, y):
     count = 0
     for i in range(N):
@@ -35,9 +33,7 @@ def getDegree(a, x, y):
             count += 1
     return count
 
-# Picks next point using Warnsdorff's heuristic.
-# Returns false if it is not possible to pick
-# next point.
+
 def nextMove(a, cell):
     min_deg_idx = -1
     c = 0
@@ -45,9 +41,7 @@ def nextMove(a, cell):
     nx = 0
     ny = 0
 
-    # Try all N adjacent of (*x, *y) starting
-    # from a random adjacent. Find the adjacent
-    # with minimum degree.
+
     start = random.randint(0, 1000) % N
     for count in range(0, N):
         i = (start + count) % N
@@ -58,57 +52,55 @@ def nextMove(a, cell):
             min_deg_idx = i
             min_deg = c
 
-    # IF we could not find a next cell
+
     if (min_deg_idx == -1):
         return None
 
-    # Store coordinates of next point
+
     nx = cell.x + cx[min_deg_idx]
     ny = cell.y + cy[min_deg_idx]
 
-    # Mark next move
+
     a[ny * N + nx] = a[(cell.y) * N + (cell.x)] + 1
 
-    # Update next point
+
     cell.x = nx
     cell.y = ny
 
     return cell
 
-# displays the chessboard with all the legal knight's moves
+
 def printA(a):
     for i in range(N):
         for j in range(N):
             print("%d\t" % a[j * N + i], end="")
         print()
 
-# checks its neighbouring squares
-# If the knight ends on a square that is one knight's move from the beginning square,then tour is closed
+
 def neighbour(x, y, xx, yy):
     for i in range(N):
         if ((x + cx[i]) == xx) and ((y + cy[i]) == yy):
             return True
     return False
 
-#  Generates the legal moves using warnsdorff's heuristics. Returns false if not possible
+
 def findClosedTour(sx, sy):
-    # Filling up the chessboard matrix with -1's
+
     a = [-1] * N * N
 
-    # initial position
-    # Current points are same as initial points
+
     cell = Cell(sx, sy)
 
-    a[cell.y * N + cell.x] = 1  # Mark first move.
+    a[cell.y * N + cell.x] = 1
 
-    # Keep picking next points using Warnsdorff's heuristic
+
     ret = None
     for i in range(N * N - 1):
         ret = nextMove(a, cell)
         if ret == None:
             return False
 
-    # Check if tour is closed (Can end at starting point)
+
     if not neighbour(ret.x, ret.y, sx, sy):
         return False
     printA(a)
