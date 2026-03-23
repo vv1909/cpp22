@@ -12,46 +12,39 @@ private:
     static int object_count;
 
 public:
-    // Конструктор без параметров
     Polynom() : variable('x') {
         coeffs.push_back(0.0);
         degrees.push_back(0);
         ++object_count;
     }
 
-    // Конструктор с коэффициентами (степени = 1)
     explicit Polynom(const std::vector<double>& coeffs) : coeffs(coeffs), variable('x') {
         degrees.resize(coeffs.size(), 1);
         ++object_count;
     }
 
-    // Конструктор со степенями (коэффициенты = 1)
     explicit Polynom(const std::vector<int>& degrees) : degrees(degrees), variable('x') {
         coeffs.resize(degrees.size(), 1.0);
         ++object_count;
     }
 
-    // Полный конструктор
     Polynom(const std::vector<double>& coeffs, const std::vector<int>& degrees, char var = 'x')
         : coeffs(coeffs), degrees(degrees), variable(var) {
         if (coeffs.size() != degrees.size()) {
-            throw std::invalid_argument("Coefficient and degree vectors must have the same size");
+            throw std::invalid_argument("Coefficient and degree vectors must have the same length");
         }
         ++object_count;
     }
 
-    // Конструктор копирования
     Polynom(const Polynom& other)
         : coeffs(other.coeffs), degrees(other.degrees), variable(other.variable) {
         ++object_count;
     }
 
-    // Деструктор
     ~Polynom() {
         --object_count;
     }
 
-    // Оператор присваивания
     Polynom& operator=(const Polynom& other) {
         if (this != &other) {
             coeffs = other.coeffs;
@@ -61,7 +54,6 @@ public:
         return *this;
     }
 
-    // Методы set/get
     void setCoeffs(const std::vector<double>& newCoeffs) {
         coeffs = newCoeffs;
     }
@@ -86,12 +78,10 @@ public:
         return variable;
     }
 
-    // Статический метод
     static int getObjectCount() {
         return object_count;
     }
 
-    // Вывод многочлена
     void print() const {
         bool first = true;
         bool allZero = true;
@@ -131,10 +121,9 @@ public:
         std::cout << std::endl;
     }
 
-    // Вычисление производной порядка degree
     Polynom computeDerivative(int degree) const {
         if (degree < 0) {
-            throw std::invalid_argument("Derivative degree cannot be negative");
+            std::cout << "derivative degree should be more than 0" << std::endl;
         }
 
         Polynom result = *this;
@@ -164,7 +153,6 @@ public:
         return result;
     }
 
-    // Вычисление значения в точке
     double computeAt(double val) const {
         double result = 0.0;
         for (size_t i = 0; i < coeffs.size(); ++i) {
@@ -174,10 +162,10 @@ public:
     }
 };
 
-// Определение статической переменной
+
 int Polynom::object_count = 0;
 
-// Глобальная функция
+
 int getMaxPolynomIdx(const std::vector<Polynom>& polynoms, double val) {
     if (polynoms.empty()) return -1;
 
@@ -193,36 +181,35 @@ int getMaxPolynomIdx(const std::vector<Polynom>& polynoms, double val) {
     return maxIdx;
 }
 
-// Демонстрация
+
 int main() {
-    std::cout << "Initial object count: " << Polynom::getObjectCount() << std::endl;
+    std::cout << "Object count: " << Polynom::getObjectCount() << std::endl;
 
     Polynom p1;
-    std::cout << "p1: ";
     p1.print();
 
     std::vector<double> coeffs = {3, -2, 1};
     Polynom p2(coeffs);
-    std::cout << "p2 (coeffs 3, -2, 1): ";
+    std::cout << "p2: ";
     p2.print();
 
     std::vector<int> degrees = {0, 2, 3};
     Polynom p3(degrees);
-    std::cout << "p3 (degrees 0,2,3): ";
+    std::cout << "p3: ";
     p3.print();
 
     std::vector<double> coeffs2 = {2.5, -1.0, 0.5};
     std::vector<int> degrees2 = {2, 1, 0};
     Polynom p4(coeffs2, degrees2, 't');
-    std::cout << "p4 (2.5 t^2 - t + 0.5): ";
+    std::cout << "p4: ";
     p4.print();
 
-    std::cout << "Object count after constructors: " << Polynom::getObjectCount() << std::endl;
+    std::cout << "Object count: " << Polynom::getObjectCount() << std::endl;
 
     p1.setVariable('y');
     p1.setCoeffs({5, 3});
     p1.setDegrees({2, 0});
-    std::cout << "Modified p1: ";
+    std::cout << "p1: ";
     p1.print();
 
     double x = 2.0;
@@ -239,9 +226,9 @@ int main() {
     std::vector<Polynom> vec = {p1, p2, p3, p4};
     double point = 1.0;
     int idx = getMaxPolynomIdx(vec, point);
-    std::cout << "Index of polynom with max value at " << point << " is " << idx << std::endl;
+    std::cout << "The index of polinom wit the biggest value in " << point << " is " << idx << std::endl;
 
-    std::cout << "Object count before exit: " << Polynom::getObjectCount() << std::endl;
+    std::cout << "Object count: " << Polynom::getObjectCount() << std::endl;
 
     return 0;
 }
