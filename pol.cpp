@@ -18,12 +18,12 @@ public:
         ++object_count;
     }
 
-    explicit Polynom(const std::vector<double>& coeffs) : coeffs(coeffs), variable('x') {
+    Polynom(const std::vector<double>& coeffs) : coeffs(coeffs), variable('x') {
         degrees.resize(coeffs.size(), 1);
         ++object_count;
     }
 
-    explicit Polynom(const std::vector<int>& degrees) : degrees(degrees), variable('x') {
+    Polynom(const std::vector<int>& degrees) : degrees(degrees), variable('x') {
         coeffs.resize(degrees.size(), 1.0);
         ++object_count;
     }
