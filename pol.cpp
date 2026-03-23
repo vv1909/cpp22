@@ -5,11 +5,12 @@
 #include <algorithm>
 
 class Polynom {
+static int object_count;
+
 private:
     std::vector<double> coeffs;
     std::vector<int> degrees;
     char variable;
-    static int object_count;
 
 public:
     Polynom() : variable('x') {
@@ -43,7 +44,8 @@ public:
 
     ~Polynom() {
         --object_count;
-    }
+        // std::cout<<"destructor"<<variable<<'\n';
+}
 
     Polynom& operator=(const Polynom& other) {
         if (this != &other) {
@@ -221,9 +223,12 @@ int main() {
 
     Polynom p4_deriv2 = p4.computeDerivative(2);
     std::cout << "p4 second derivative: ";
+
     p4_deriv2.print();
 
     std::vector<Polynom> vec = {p1, p2, p3, p4};
+    // std::cout << "Object count: " << Polynom::getObjectCount() << std::endl;
+
     double point = 1.0;
     int idx = getMaxPolynomIdx(vec, point);
     std::cout << "The index of polinom wit the biggest value in " << point << " is " << idx << std::endl;
