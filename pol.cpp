@@ -19,48 +19,42 @@ public:
         ++object_count;
     }
 
-    Polynom(const std::vector<double>& coeffs) : coeffs(coeffs), variable('x') {
+    Polynom(const std::vector<double> coeffs) : coeffs(coeffs), variable('x') {
         degrees.resize(coeffs.size(), 1);
         ++object_count;
     }
 
-    Polynom(const std::vector<int>& degrees) : degrees(degrees), variable('x') {
+    Polynom(const std::vector<int> degrees) : degrees(degrees), variable('x') {
         coeffs.resize(degrees.size(), 1.0);
         ++object_count;
     }
 
-    Polynom(const std::vector<double>& coeffs, const std::vector<int>& degrees, char var = 'x')
+    Polynom(const std::vector<double> coeffs, const std::vector<int> degrees, char var = 'x')
         : coeffs(coeffs), degrees(degrees), variable(var) {
         if (coeffs.size() != degrees.size()) {
-            throw std::invalid_argument("Coefficient and degree vectors must have the same length");
+            std::cout << "Error, not same length\n";
         }
-        ++object_count;
-    }
-
-    Polynom(const Polynom& other)
-        : coeffs(other.coeffs), degrees(other.degrees), variable(other.variable) {
         ++object_count;
     }
 
     ~Polynom() {
         --object_count;
         // std::cout<<"destructor"<<variable<<'\n';
-}
-
-    Polynom& operator=(const Polynom& other) {
-        if (this != &other) {
-            coeffs = other.coeffs;
-            degrees = other.degrees;
-            variable = other.variable;
-        }
-        return *this;
     }
 
-    void setCoeffs(const std::vector<double>& newCoeffs) {
+                                                                                                                                              Polynom(const Polynom& other)
+        : coeffs(other.coeffs), degrees(other.degrees), variable(other.variable) {
+        ++object_count;
+    }
+
+
+
+
+    void setCoeffs(const std::vector<double> newCoeffs) {
         coeffs = newCoeffs;
     }
 
-    void setDegrees(const std::vector<int>& newDegrees) {
+    void setDegrees(const std::vector<int> newDegrees) {
         degrees = newDegrees;
     }
 
@@ -168,7 +162,7 @@ public:
 int Polynom::object_count = 0;
 
 
-int getMaxPolynomIdx(const std::vector<Polynom>& polynoms, double val) {
+int getMaxPolynomIdx(const std::vector<Polynom> polynoms, double val) {
     if (polynoms.empty()) return -1;
 
     int maxIdx = 0;
