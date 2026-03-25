@@ -42,7 +42,9 @@ public:
         // std::cout<<"destructor"<<variable<<'\n';
     }
 
-                                                                                                                                                            Polynom(const Polynom& other): coeffs(other.coeffs), degrees(other.degrees), variable(other.variable) { ++object_count;}
+    Polynom(const Polynom& other) : coeffs(other.coeffs), degrees(other.degrees), variable(other.variable) {
+        ++object_count;
+    }
 
 
 
