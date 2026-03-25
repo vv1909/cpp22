@@ -39,7 +39,6 @@ public:
 
     ~Polynom() {
         --object_count;
-        // std::cout<<"destructor"<<variable<<'\n';
     }
 
     Polynom(const Polynom& other) : coeffs(other.coeffs), degrees(other.degrees), variable(other.variable) {
