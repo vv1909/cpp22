@@ -14,6 +14,7 @@ private:
 
 public:
     Polynom() : variable('x') {
+        
         coeffs.push_back(0.0);
         degrees.push_back(0);
         ++object_count;
