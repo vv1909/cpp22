@@ -42,6 +42,10 @@ public:
         --object_count;
     }
 
+
+
+
+    
     Polynom(const Polynom& other) : coeffs(other.coeffs), degrees(other.degrees), variable(other.variable) {
         ++object_count;
     }
@@ -216,8 +220,8 @@ int main() {
 
     Polynom p4_deriv2 = p4.computeDerivative(2);
     std::cout << "p4 second derivative: ";
-
     p4_deriv2.print();
+    std::cout << "Object count: " << Polynom::getObjectCount() << std::endl;
     {
         std::vector<Polynom> vec = {p1, p2, p3, p4};
         std::cout << "Object count including new vector: " << Polynom::getObjectCount() << std::endl;
@@ -226,8 +230,6 @@ int main() {
         int idx = getMaxPolynomIdx(vec, point);
         std::cout << "The index of polinom with the biggest value in " << point << " is " << idx << std::endl;
     }
-    std::cout << "Object count: " << Polynom::getObjectCount() << std::endl;
-    p4.~Polynom();
     std::cout << "Object count: " << Polynom::getObjectCount() << std::endl;
 
 
