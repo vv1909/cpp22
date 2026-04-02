@@ -1,8 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-#include <stdexcept>
-#include <algorithm>
+    
 
 class Polynom {
 static int object_count;
